@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html ng-app="chatApp">
+<head>
+    <script src="/sockjs-0.3.4.js"></script>
+    <script src="/angular.js"></script>
+    <script src="/ui-bootstrap-tpls-0.12.1.min.js"></script>
+    <script src="/jquery-2.1.3.min.js"></script>
+    <script src="/angular-sanitize.min.js"></script>
+    <script src="/app.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.css" media="screen" />
+    <link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32" />
+    <style>
+        .message-box{
+            width:100%;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            border-color: #2e6da4;
+        }
+        .modal-dialog {
+            position:absolute;
+            top:5%;
+            left:5%;
+            outline: none;
+        }
+        .users {
+            position:fixed;
+            top:0;
+            padding-top:3px;
+            height:40px;
+            width:100%;
+        }
+        .userButton {
+            margin-top:6px;
+            margin-right:4px;
+        }
+        #messagePanel{
+            position:fixed;
+            top:40px;
+            bottom:50px;
+            overflow-y:auto;
+            width:100%;
+        }
+        .messageFooter{
+            position:fixed;
+            bottom:0;
+            width:100%;
+        }
+        ::-webkit-input-placeholder {
+        color:    #999;
+        }
+        :-moz-placeholder {
+        color:    #999;
+        }
+        ::-moz-placeholder {
+        color:    #999;
+        }
+        :-ms-input-placeholder {
+        color:    #999;
+        }
+        input.ng-invalid
+        {
+        border:1px solid #f00 !important;
+        }
+    </style>
+    <title>Baconhouse Chat</title>
+</head>
+<body ng-controller="ChatCtrl" ng-init="getUsers()">
+    <audio id="audioNotification" src="audio/notify.wav" preload="auto"></audio>
+    <script type="text/ng-template" id="privateModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">@ {{privateMessageTargetUser}}</h3>
+        </div>
+        <div class="modal-body">
+            <div class="input-group">
+                <input id="privateMessageText" autofocus placeholder="Dankest memes go here" type="text" style="width:100%;height:33px;" ng-keypress="privateMessageKeypress($event)" ng-focus="messageFocus()" ng-model="privateMessage"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" ng-click="addPrivateMessage()">Send</button>
+                    </span>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="settingsModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Settings</h3>
+        </div>
+        <div class="modal-body" >
+            <div class="control-group">
+                <div class="controls">
+                    <div class="input-append">
+                        <label class="control-label" for="browserNotify">Browser Notification</label>
+                        <input type="checkbox" ng-model="settings.browserNotify" ng-click="toggleBrowserNotify()" ng-checked="settings.browserNotify" name="settings.browserNotify" id="browserNotify">
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="input-append">
+                        <label class="control-label" for="notificationSound">Sound Notification</label>
+                        <input type="checkbox" ng-model="settings.notificationSound" ng-click="toggleNotificationSound()" ng-checked="settings.notificationSound" name="settings.notificationSound" id="notificationSound"/>
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="input-append">
+                        <label class="control-label" for="typingText">"So and so is typing..." Message</label>
+                        <input type="checkbox" ng-model="settings.typingText" ng-click="toggleTypingText()" ng-checked="settings.typingText" name="settings.typingText" id="typingText"/>
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="input-append">
+                        <label class="control-label" for="inlineImages">Inline images</label>
+                        <input type="checkbox" ng-model="settings.inlineImages" ng-click="toggleInlineImages()" ng-checked="settings.inlineImages" name="settings.inlineImages" id="inlineImages"/>
+                    </div>
+                </div>
+            </div>
+            Legend: '-' not done, '*' done, '~' partially done
+            <pre style="max-height:200px;overflow-y:scroll;">
+TODO
+- mobile notification enhancements
+- diff colors, selectable per user
+- DNS
+- Saving settings by username?
+- hosting! package!
+            </pre>
+        </div>
+        <div class="modal-footer">
+        </div>
+    </script>
+    <form class="connectionControls" ng-hide="connected" name="form">
+        <div class="panel panel-default">
+            <div class="panel-body connection">
+                <div class="form-group">
+                    <div class="input-group col-md-2 col-md-offset-5">
+                        <input id="name" ng-maxlength="15" type="text" class="form-control" ng-disabled="connected" ng-keypress="nameKeypress($event)" ng-model="name"/>
+                        <span class="input-group-btn">
+                            <button id="connect" class="btn btn-primary" type="button" ng-disabled="form.$invalid" ng-click="initUser()">Boom</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <small class="col-md-2 col-md-offset-5" ng-show="form.$invalid" style="color:red">Go away, Kyle.</small>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="messenger" ng-show="connected">
+        <div class="panel panel-default" style="width:100%;">
+            <div class="panel-heading users">
+                <button class="btn btn-xs userButton" id="{{user.name}}" ng-repeat="user in users" ng-click="sendPrivateMessage(user.name)">{{user.name}}</button>
+                <button id="disconnect" class="btn btn-danger" style="float:right;margin-left:2px;margin-right:2px;" type="button" ng-click="clearMessages()" data-toggle="tooltip" data-placement="left"
+                        tooltip="Clear Messages"
+                        tooltip-placement="left">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+                <button id="disconnect" class="btn btn-danger" style="float:right;margin-left:2px;margin-right:2px;" type="button" ng-click="disconnect()" data-toggle="tooltip" data-placement="left"
+                        tooltip="Disconnect"
+                        tooltip-placement="left">
+                    <span class="glyphicon glyphicon-off"></span>
+                </button>
+                <button class="btn btn-primary" style="float:right;margin-left:2px;margin-right:2px;" ng-hide="!connected" ng-click="settingsModal()" data-toggle="tooltip" data-placement="left"
+                        tooltip="Settings Menu"
+                        tooltip-placement="left">
+                    <span class="glyphicon glyphicon-cog"></span>
+                </button>
+            </div>
+            <div id="messagePanel" class="panel-body">
+                <div ng-repeat="message in messages | orderBy : message.messageDateTime : true" class="message">
+                    <span ng-if="!isAction(message.textMessage)" class="label" style="cursor:pointer;" ng-class="name != message.sender ? 'label-success' : 'label-warning'" data-toggle="tooltip" data-placement="left"
+                          tooltip-html-unsafe="{{message.sentTo}}<br/>{{message.messageDateTime}}"
+                          ng-click="sendPrivateMessage(message.sender)"
+                          tooltip-placement="right">{{message.sender}}</span>
+                    <span ng-if="!isAction(message.textMessage)" style="padding-left:5px;" class="messageText" ng-bind-html="message.textMessage | linky:'_blank'"></span>
+                    <span ng-if="isAction(message.textMessage)" style="font-style:italic;" ng-bind-html="actionMessage(message.textMessage, message.sender)"></span>
+                    <img ng-src="{{message.imageUrl}}" ng-show="message.hasImage" style="max-height: 200px;"/>
+                </div>
+                <div ng-show="settings.typingText" id="typing" style="height:5px;font-size:8pt;color:gray;"><span ng-repeat="typer in typing"> {{typer}}</span><span ng-show="typing.length"> is typing...</span></div>
+            </div>
+            <div class="panel-footer messageFooter">
+                <div class="input-group">
+                    <input id="messageText" placeholder="Dank memes go here" type="text" style="width:100%;height:33px;" ng-keypress="messageKeypress($event)" ng-focus="messageFocus()" ng-model="message"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" ng-click="addMessage()">Send</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
