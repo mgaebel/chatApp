@@ -11,6 +11,7 @@ public class IncomingChatMessage {
     private LocalDateTime messageTime;
     private String sender;
     private String textMessage;
+    private String labelColor;
 
     public IncomingChatMessage(){}
 
@@ -44,5 +45,13 @@ public class IncomingChatMessage {
 
     public void setMessageTime(LocalDateTime messageTime) {
         this.messageTime = messageTime;
+    }
+
+    public String getLabelColor() {
+        return labelColor;
+    }
+
+    public void setLabelColor(String labelColor) {
+        this.labelColor = labelColor;
     }
 }

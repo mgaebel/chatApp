@@ -8,7 +8,7 @@ public class UserSettings {
     boolean soundNotification;
     boolean browserNotification;
     boolean typingText;
-    String colorHex;
+    String labelColor;
     String inlineImages;
     int messageType = 5;
 
@@ -52,12 +52,12 @@ public class UserSettings {
         this.typingText = typingText;
     }
 
-    public String getColorHex() {
-        return colorHex;
+    public String getLabelColor() {
+        return labelColor;
     }
 
-    public void setColorHex(String colorHex) {
-        this.colorHex = colorHex;
+    public void setLabelColor(String labelColor) {
+        this.labelColor = labelColor;
     }
 
     public String getInlineImages() {

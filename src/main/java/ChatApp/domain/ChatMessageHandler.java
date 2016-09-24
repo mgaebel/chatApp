@@ -25,6 +25,7 @@ public class ChatMessageHandler {
         outgoingChatMessage.setMessageTime(LocalDateTime.now());
         outgoingChatMessage.setSender( chatMessage.getSender() );
         outgoingChatMessage.setTextMessage( chatMessage.getTextMessage() );
+        outgoingChatMessage.setLabelColor( chatMessage.getLabelColor() );
         outgoingChatMessage.setMessageType( 2 );
 
         StringBuilder sb = new StringBuilder(50);

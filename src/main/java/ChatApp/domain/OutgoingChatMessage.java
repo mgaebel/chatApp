@@ -11,6 +11,7 @@ public class OutgoingChatMessage {
     private String sender;
     private String textMessage;
     private String sentTo;
+    private String labelColor;
     private int messageType;
 
     public OutgoingChatMessage(){}
@@ -53,5 +54,13 @@ public class OutgoingChatMessage {
 
     public void setSentTo(String sentTo) {
         this.sentTo = sentTo;
+    }
+
+    public String getLabelColor() {
+        return labelColor;
+    }
+
+    public void setLabelColor(String labelColor) {
+        this.labelColor = labelColor;
     }
 }

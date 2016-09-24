@@ -21,6 +21,7 @@ public class OutgoingChatMessageSerializer implements JsonSerializer<OutgoingCha
         chatMessage.addProperty( "sender", outgoingChatMessage.getSender() );
         chatMessage.addProperty( "messageType", outgoingChatMessage.getMessageType() );
         chatMessage.addProperty( "sentTo", outgoingChatMessage.getSentTo() );
+        chatMessage.addProperty( "labelColor", outgoingChatMessage.getLabelColor() );
 
         return chatMessage;
     }
