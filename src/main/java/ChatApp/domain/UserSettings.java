@@ -4,19 +4,20 @@ package ChatApp.domain;
  * Created by Michael on 11/25/2015.
  */
 public class UserSettings {
-    String userName;
+    String name;
     boolean soundNotification;
     boolean browserNotification;
     boolean typingText;
     String colorHex;
+    String inlineImages;
     int messageType = 5;
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getMessageType() {
@@ -57,5 +58,13 @@ public class UserSettings {
 
     public void setColorHex(String colorHex) {
         this.colorHex = colorHex;
+    }
+
+    public String getInlineImages() {
+        return inlineImages;
+    }
+
+    public void setInlineImages(String inlineImages) {
+        this.inlineImages = inlineImages;
     }
 }

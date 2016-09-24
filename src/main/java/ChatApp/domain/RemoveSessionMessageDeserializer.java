@@ -14,11 +14,7 @@ public class RemoveSessionMessageDeserializer implements JsonDeserializer<Remove
         RemoveSessionMessage removeSessionMessage = new RemoveSessionMessage();
 
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        User user = new User();
-        user.setId( jsonObject.getAsJsonPrimitive("id").getAsString() );
-        user.setName( jsonObject.getAsJsonPrimitive("name").getAsString() );
-        removeSessionMessage.setUser( user );
-
+        removeSessionMessage.setUserName(jsonObject.getAsJsonPrimitive("userName").getAsString() );
         return removeSessionMessage;
     }
 }

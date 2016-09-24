@@ -23,11 +23,9 @@ import static com.google.common.io.Files.toString;
  */
 public class SessionMessageHandler {
 
-
     Map<User, WebSocketSession> activeSessions = new HashMap<User,WebSocketSession>();
     GsonBuilder gsonBuilder;
     Gson gson;
-
 
     public SessionMessageHandler(){
         gsonBuilder = new GsonBuilder();
@@ -43,6 +41,9 @@ public class SessionMessageHandler {
                 activeUser.setLocalDateTime(LocalDateTime.now());
                 alreadyActive = true;
                 user = activeUser;
+                user.setStatus(StatusEnum.ONLINE);
+                //override old session.
+                activeSessions.put( user, session );
                 break;
             }
         }
@@ -55,6 +56,7 @@ public class SessionMessageHandler {
             activeSessions.put(user, session);
         }
         try {
+            applySavedUserSettings( user.getName(), session );
             updateUserList(session, false, user.getName());
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,7 +65,7 @@ public class SessionMessageHandler {
 
     public void handleRemoveSessionMessage( RemoveSessionMessage removeSessionMessage, WebSocketSession session ){
 
-        User user = getActiveUser( removeSessionMessage.getUser() );
+        User user = getActiveUserByName( removeSessionMessage.getUserName() );
 
         getActiveSessions().remove(user);
         try {
@@ -73,19 +75,23 @@ public class SessionMessageHandler {
         }
     }
 
-    public void handleSettingsRequest( SettingsRequestMessage settingsRequestMessage, WebSocketSession session) throws IOException{
-        String jsonString = com.google.common.io.Files.toString(new File("C:/Users/Michael/App/" + settingsRequestMessage.getName() + ".json"), Charsets.UTF_8);
-        //UserSettings userSettings = gson.fromJson( jsonString, UserSettings.class );
-        session.sendMessage(new TextMessage(jsonString));
+    public void applySavedUserSettings( String userName, WebSocketSession session) throws IOException{
+        File file = new File("C:\\Users\\mgaeb\\App\\" + userName + ".json");
+        if( file.exists() ) {
+            String jsonString = com.google.common.io.Files.toString(file, Charsets.UTF_8);
+            session.sendMessage(new TextMessage(jsonString));
+        }
     }
 
     public void handleSettingsSave( UserSettings settingsSaveMessage, WebSocketSession session) throws IOException {
         String userSettings = gson.toJson(settingsSaveMessage, UserSettings.class);
-        try {
-            FileWriter file = new FileWriter("C:/Users/Michael/App/"+settingsSaveMessage.getUserName()+".json");
+        FileWriter file = new FileWriter(new File("C:\\Users\\mgaeb\\App\\"+settingsSaveMessage.getName()+".json"));
+        try{
             file.write( userSettings );
         } catch ( Exception e ){
             throw new IOException( e );
+        } finally {
+            file.close();
         }
     }
 
@@ -93,6 +99,15 @@ public class SessionMessageHandler {
         for(User activeUser : getActiveSessions().keySet()){
             if( user.equals( activeUser ) ){
                 return user;
+            }
+        }
+        return null;
+    }
+
+    private User getActiveUserByName( String name ){
+        for(User activeUser : getActiveSessions().keySet()){
+            if( name.equals( activeUser.getName() ) ){
+                return activeUser;
             }
         }
         return null;

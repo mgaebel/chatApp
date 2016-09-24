@@ -59,7 +59,7 @@ angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$ro
             $scope.$apply();
             setTimeout(function(){
                 $scope.$apply();
-            },1)
+            },1);
             console.log($scope.users);
             break;
         }
@@ -94,11 +94,14 @@ angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$ro
             }, 1500);
             break;
         }
-        case 5 : {
+        case 6 : {
             $scope.settings.browserNotify = data.browserNotification;
             $scope.settings.notificationSound = data.soundNotification;
             $scope.settings.typingText = data.typingText;
-            $scope.$apply();
+            $scope.settings.inlineImages = data.inlineImages;
+            setTimeout( function(){
+                $scope.$apply();
+            },100);
             break;
         }
         default : {
@@ -177,23 +180,16 @@ $(window).blur(function() {
       socketClient.send( "0|" + JSON.stringify({"name":name}) );
   }
 
-  var getSettings = function( name ){
-    /*
-      socketClient.send( "5|"+JSON.stringify({"name":name}));
-      */
-  }
-
   $scope.saveSettings = function(){
-  /*
       socketClient.send( "6|"+JSON.stringify({
-        "userName":$scope.userName,
+        "name":$scope.name,
         "messageType":6,
-        "soundNotification":$scope.notificationSound,
-        "browserNotification":$scope.browserNotify,
-        "typingText":$scope.typingText,
+        "soundNotification":$scope.settings.notificationSound,
+        "browserNotification":$scope.settings.browserNotify,
+        "typingText":$scope.settings.typingText,
+        "inlineImages":$scope.settings.inlineImages,
         "colorHex":""
       }));
-      */
   }
 
   var setConnected = function(connected) {
@@ -203,7 +199,7 @@ $(window).blur(function() {
 
   var disconnect = function() {
       $("#connect").attr("disabled",false);
-      socketClient.send( "1|" + JSON.stringify( $scope.getUser( $scope.name ) ) );
+      socketClient.send( "1|{'userName':'" + $scope.name +"'}");
       setConnected(false);
       $scope.targetUsers = [];
       console.log("Disconnected");
@@ -241,7 +237,6 @@ $(window).blur(function() {
                 },500);
             }
         }, 5000);
-        //getSettings($scope.name);
         };
 
 
@@ -261,9 +256,11 @@ $(window).blur(function() {
 
         socket.onclose = function(e) {
          disconnect();
-         console.log('close');
+         console.log('closed!!');
          console.log(e);
-         $scope.initUser();
+         setTimeout( function(){
+            $scope.initUser();
+         }, 500);
         };
 
         socketClient = socket;
@@ -332,7 +329,7 @@ $(window).blur(function() {
   $scope.getUser = function( userName ){
     var selectedUser = null;
     $scope.users.forEach( function( user ){
-        if( user.name === userName ){
+        if( user.name == userName ){
             selectedUser = user;
         }
     });

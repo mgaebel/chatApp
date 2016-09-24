@@ -5,15 +5,15 @@ package ChatApp.domain;
  */
 public class RemoveSessionMessage {
 
-    private User user;
+    private String userName;
 
     public RemoveSessionMessage(){}
 
-    public User getUser() {
-        return user;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

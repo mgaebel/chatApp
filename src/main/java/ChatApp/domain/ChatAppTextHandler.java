@@ -51,11 +51,9 @@ public class ChatAppTextHandler extends TextWebSocketHandler {
                     chatMessageHandler.handleTypingMessage(gson.fromJson(getMessageContent(message.getPayload()), TypingMessage.class),sessionMessageHandler.getActiveSessions());
                     break;
                 }
-                case 5: {
-                    sessionMessageHandler.handleSettingsRequest(gson.fromJson(getMessageContent(message.getPayload()), SettingsRequestMessage.class), session );
-                }
                 case 6: {
                     sessionMessageHandler.handleSettingsSave( gson.fromJson(getMessageContent(message.getPayload()), UserSettings.class), session);
+                    break;
                 }
                 default: {
                     System.out.println(message.getPayload());
