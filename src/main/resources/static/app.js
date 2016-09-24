@@ -134,7 +134,7 @@ $(window).blur(function() {
 });
 
   var notify = function( data ){
-    if( $scope.settings.browserNotify && !windowActive ) {
+    if( ($scope.settings.browserNotify || data.sender.indexOf(" @") > -1) && !windowActive ) {
         var options = {
             body: data.textMessage,
             dir : "ltr"
@@ -233,7 +233,12 @@ $(window).blur(function() {
                 var date = $scope.getLocalDateTime();
                 var dateString = date.toISOString();
                 $scope.messages.push({"textMessage":"-- Connection to server lost --","sender":"","messageDateTime":dateString});
+                disconnect();
                 socket.close();
+
+                setTimeout(function(){
+                    $scope.initUser();
+                },500);
             }
         }, 5000);
         //getSettings($scope.name);

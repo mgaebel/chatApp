@@ -6,6 +6,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public class ChatMessageHandler {
@@ -21,7 +22,7 @@ public class ChatMessageHandler {
 
     public void handleMessage( IncomingChatMessage chatMessage, Map<User,WebSocketSession> activeSessions ){
         OutgoingChatMessage outgoingChatMessage = new OutgoingChatMessage();
-        outgoingChatMessage.setMessageTime( chatMessage.getMessageTime() );
+        outgoingChatMessage.setMessageTime(LocalDateTime.now());
         outgoingChatMessage.setSender( chatMessage.getSender() );
         outgoingChatMessage.setTextMessage( chatMessage.getTextMessage() );
         outgoingChatMessage.setMessageType( 2 );

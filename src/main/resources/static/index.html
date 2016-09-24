@@ -168,7 +168,7 @@ TODO
                 </button>
             </div>
             <div id="messagePanel" class="panel-body">
-                <div ng-repeat="message in messages | orderBy : message.messageDateTime : true" class="message">
+                <div ng-repeat="message in messages" class="message">
                     <span ng-if="!isAction(message.textMessage)" class="label" style="cursor:pointer;" ng-class="name != message.sender ? 'label-success' : 'label-warning'" data-toggle="tooltip" data-placement="left"
                           tooltip-html-unsafe="{{message.sentTo}}<br/>{{message.messageDateTime}}"
                           ng-click="sendPrivateMessage(message.sender)"
