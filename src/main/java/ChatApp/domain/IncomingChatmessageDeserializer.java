@@ -19,6 +19,7 @@ public class IncomingChatMessageDeserializer implements JsonDeserializer<Incomin
         message.setTextMessage(messageObject.getAsJsonPrimitive("textMessage").getAsString());
         message.setMessageTime(LocalDateTime.now());
         message.setSender( messageObject.getAsJsonPrimitive("sender").getAsString());
+        message.setLabelColor( messageObject.getAsJsonPrimitive("labelColor").getAsString());
         JsonArray targetUsersArray = messageObject.getAsJsonArray("targetUsers");
         List<User> targetUsers = new ArrayList<User>();
         for( int i=0; i < targetUsersArray.size(); i++ ){

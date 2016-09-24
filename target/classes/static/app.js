@@ -22,7 +22,8 @@ angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$ro
     "browserNotify":false,
     "notificationSound":true,
     "typingText":false,
-    "inlineImages":true
+    "inlineImages":true,
+    "labelColor":"#5cb85c"
   }
   var socketClient;
 
@@ -41,7 +42,8 @@ angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$ro
       socketClient.send("2|"+JSON.stringify({
         "textMessage" : text,
         "targetUsers" : targetUsers,
-        "sender" : $scope.name
+        "sender" : $scope.name,
+        "labelColor" : $scope.settings.labelColor
       }));
   };
 
@@ -95,10 +97,21 @@ angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$ro
             break;
         }
         case 6 : {
-            $scope.settings.browserNotify = data.browserNotification;
-            $scope.settings.notificationSound = data.soundNotification;
-            $scope.settings.typingText = data.typingText;
-            $scope.settings.inlineImages = data.inlineImages;
+            if( typeof data.browserNotification != 'undefined' ){
+                $scope.settings.browserNotify = data.browserNotification;
+            }
+            if( typeof data.soundNotification != 'undefined' ){
+                $scope.settings.notificationSound = data.soundNotification;
+            }
+            if( typeof data.typingText != 'undefined' ){
+                $scope.settings.typingText = data.typingText;
+            }
+            if( typeof data.inlineImages != 'undefined' ){
+                $scope.settings.inlineImages = data.inlineImages;
+            }
+            if( typeof data.labelColor != 'undefined' ){
+                $scope.settings.labelColor = data.labelColor;
+            }
             setTimeout( function(){
                 $scope.$apply();
             },100);
@@ -188,7 +201,7 @@ $(window).blur(function() {
         "browserNotification":$scope.settings.browserNotify,
         "typingText":$scope.settings.typingText,
         "inlineImages":$scope.settings.inlineImages,
-        "colorHex":""
+        "labelColor":$scope.settings.labelColor
       }));
   }
 
@@ -270,7 +283,7 @@ $(window).blur(function() {
       $scope.sendMessage($scope.message, $scope.targetUsers);
       var date = $scope.getLocalDateTime();
       var dateString = date.toISOString();
-      $scope.messages.push({"textMessage":$scope.message,"sender":$scope.name,"messageDateTime" : dateString, "sentTo" : "Everyone"});
+      $scope.messages.push({"textMessage":$scope.message,"sender":$scope.name,"messageDateTime" : dateString, "sentTo" : "Everyone", "labelColor" : $scope.settings.labelColor});
       $scope.message = "";
       $scope.$$postDigest(function(){
        $("#messagePanel").scrollTop($("#messagePanel")[0].scrollHeight);
@@ -426,7 +439,7 @@ chatApp.controller('PrivateMessageCtrl', ['$scope', function ($scope){
         $scope.sendMessage($scope.privateMessage, user);
         var date = $scope.getLocalDateTime();
         var dateString = date.toISOString();
-        $scope.messages.push({"textMessage":$scope.privateMessage,"sender":$scope.name+" @"+$scope.privateMessageTargetUser,"messageDateTime" : dateString, "sentTo" : $scope.privateMessageTargetUser});
+        $scope.messages.push({"textMessage":$scope.privateMessage,"sender":$scope.name+" @"+$scope.privateMessageTargetUser,"messageDateTime" : dateString, "sentTo" : $scope.privateMessageTargetUser, "labelColor" : $scope.settings.labelColor});
         $scope.privateMessage = "";
         $scope.$$postDigest(function(){
          $("#messagePanel").scrollTop($("#messagePanel")[0].scrollHeight);
@@ -459,5 +472,11 @@ chatApp.controller('SettingsCtrl', ['$scope', function ($scope){
 
       $scope.saveSettings();
       console.log("Inline images "+ $scope.settings.inlineImages);
+    }
+
+    $scope.setLabelColor = function(){
+
+        $scope.saveSettings();
+        console.log("Label color "+ $scope.settings.labelColor);
     }
 }]);
