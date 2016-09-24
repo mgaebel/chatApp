@@ -246,6 +246,7 @@ $(window).blur(function() {
                 socket.close();
 
                 setTimeout(function(){
+                    $scope.messages.push({"textMessage":"-- Reconnecting... --","sender":"","messageDateTime":dateString});
                     $scope.initUser();
                 },500);
             }
@@ -272,6 +273,7 @@ $(window).blur(function() {
          console.log('closed!!');
          console.log(e);
          setTimeout( function(){
+            $scope.messages.push({"textMessage":"-- Reconnecting... --","sender":"","messageDateTime":dateString});
             $scope.initUser();
          }, 500);
         };
@@ -350,20 +352,7 @@ $(window).blur(function() {
   }
 
   $scope.initUser = function(){
-    //var duplicate = false;
-    //console.log("init");
-    //$($scope.users).each(function(index,user){
-    //console.log(user.name);
-    //console.log($scope.name);
-    //  if(user.name === $scope.name){
-    //      duplicate = true;
-    //  }
-    //});
-    //if( duplicate ){
-    //    window.alert($scope.name+" is already in there! Go away Kyle!");
-    //} else {
-        initialize();
-    //}
+    initialize();
   };
 
   $scope.disconnect = function(){
