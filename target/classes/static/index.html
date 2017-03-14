@@ -181,9 +181,9 @@ TODO
                           tooltip-html-unsafe="{{message.sentTo}}<br/>{{message.messageDateTime}}"
                           ng-click="sendPrivateMessage(message.sender)"
                           tooltip-placement="right">{{message.sender}}</span>
-                    <span ng-if="!isAction(message.textMessage)" style="padding-left:5px;" class="messageText" ng-bind-html="message.textMessage | linky:'_blank'"></span>
+                    <span ng-if="!isAction(message.textMessage)" style="padding-left:5px;" class="messageText" ng-bind-html-unsafe="message.textMessage | parseUrlFilter:'_blank'"></span></span>
                     <span ng-if="isAction(message.textMessage)" style="font-style:italic;" ng-bind-html="actionMessage(message.textMessage, message.sender)"></span>
-                    <img ng-src="{{message.imageUrl}}" ng-show="message.hasImage" style="max-height: 200px;"/>
+                    <a targe="_blank" ng-show="message.hasImage" href="{{message.imageUrl}}"><img ng-src="{{message.imageUrl}}" style="max-height: 200px;"/></a>
                 </div>
                 <div ng-show="settings.typingText" id="typing" style="height:5px;font-size:8pt;color:gray;"><span ng-repeat="typer in typing"> {{typer}}</span><span ng-show="typing.length"> is typing...</span></div>
             </div>

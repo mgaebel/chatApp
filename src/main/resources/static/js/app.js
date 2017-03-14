@@ -66,6 +66,7 @@ angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$ro
             break;
         }
         case 2 : {
+            data.messageText = $scope.styleMessageText(data.messageText);
             $scope.messages.push(data);
             $scope.typing = [];
             $("button.userButton").removeClass("btn-success");
@@ -285,7 +286,10 @@ $(window).blur(function() {
       $scope.sendMessage($scope.message, $scope.targetUsers);
       var date = $scope.getLocalDateTime();
       var dateString = date.toISOString();
-      $scope.messages.push({"textMessage":$scope.message,"sender":$scope.name,"messageDateTime" : dateString, "sentTo" : "Everyone", "labelColor" : $scope.settings.labelColor});
+      var messageText = $scope.styleMessageText( $scope.message );
+      console.log(messageText);
+      $scope.messages.push({"textMessage":messageText,"sender":$scope.name,"messageDateTime" : dateString, "sentTo" : "Everyone", "labelColor" : $scope.settings.labelColor});
+      console.log($scope.messages);
       $scope.message = "";
       $scope.$$postDigest(function(){
        $("#messagePanel").scrollTop($("#messagePanel")[0].scrollHeight);
@@ -307,22 +311,23 @@ $(window).blur(function() {
     return sender + " " + textString.substring( 4 );
   }
 
+  $scope.styleMessageText = function( messageText ) {
+    console.log( messageText );
+    messageText = messageText.replace(/(^|\s)_([^_]+)_(\s|$)/g,"$1<i>$2</i>$3");
+    messageText = messageText.replace(/(^|\s)\*([^\*]+)\*(\s|$)/g,"$1<b>$2</b>$3");
+    return messageText;
+  };
+
   $scope.parseLinkedImg = function(dateString) {
-        console.log("1");
-        console.log(dateString);
         if( $scope.settings.inlineImages ){
-        console.log("2");
             var link = $(".messageText").last().find("a").attr("href");
             if( link ){
-            console.log("3");
                 if(link.indexOf(".gif") > -1 || link.indexOf(".jpeg") > -1 || link.indexOf(".jpg") > -1 || link.indexOf(".png") > -1 ){
-                console.log("4");
+                    $(".messageText").last().find("a").detach();
                     $scope.messages.push({"textMessage":"","sender":"","messageDateTime" : dateString, "sentTo" : "", "hasImage":true,"imageUrl":link});
-                    console.log("5");
                     $scope.$apply();
                     $scope.$$postDigest(function(){
                            $("#messagePanel").scrollTop($("#messagePanel")[0].scrollHeight);
-                           console.log("6");
                     },0,false);
                 }
             }
@@ -408,6 +413,50 @@ $(window).blur(function() {
       };
 
 });
+
+chatApp.directive('parseUrl', function () {
+     var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/gi;
+     return {
+         restrict: 'A',
+         require: 'ngModel',
+         replace: true,
+         scope: {
+             props: '=parseUrl',
+             ngModel: '=ngModel'
+         },
+         link: function compile(scope, element, attrs, controller) {
+             scope.$watch('ngModel', function (value) {
+                 var html = value.replace(urlPattern, '<a target="' + scope.props.target + '" href="$&">$&</a>') + " | " + scope.props.otherProp;
+                 element.html(html);
+             });
+         }
+     };
+ });
+
+chatApp.filter('parseUrlFilter', function () {
+    var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/gi;
+    return function (text, target ) {
+        return text.replace(urlPattern, '<a target="' + target + '" href="$&">$&</a>');
+    };
+});
+
+chatApp.directive('ngBindHtmlUnsafe', ['$sce', function($sce){
+    return {
+        scope: {
+            ngBindHtmlUnsafe: '=',
+        },
+        template: "<span ng-bind-html='trustedHtml'></span>",
+        link: function($scope, iElm, iAttrs, controller) {
+            $scope.updateView = function() {
+                $scope.trustedHtml = $sce.trustAsHtml($scope.ngBindHtmlUnsafe);
+            }
+
+            $scope.$watch('ngBindHtmlUnsafe', function(newVal, oldVal) {
+                $scope.updateView(newVal);
+            });
+        }
+    };
+}]);
 
 chatApp.controller('PrivateMessageCtrl', ['$scope', function ($scope){
     var user = [];
