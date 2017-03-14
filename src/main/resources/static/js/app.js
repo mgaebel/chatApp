@@ -66,7 +66,7 @@ angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$ro
             break;
         }
         case 2 : {
-            data.messageText = $scope.styleMessageText(data.messageText);
+            data.textMessage = $scope.styleMessageText(data.textMessage);
             $scope.messages.push(data);
             $scope.typing = [];
             $("button.userButton").removeClass("btn-success");
