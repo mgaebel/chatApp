@@ -1,0 +1,29 @@
+<div id="FileServer" ng-init="init()">
+    <div class="panel panel-default" style="width:100%;">
+        <div class="panel-heading users" style="z-index:5;">
+            <button id="messenger" class="btn btn-primary" style="float:right;margin-left:2px;margin-right:2px;" type="button" ng-click="messenger()" data-toggle="tooltip" data-placement="left"
+                    tooltip="Goto Chat"
+                    tooltip-placement="left">
+                <span class="glyphicon glyphicon-align-left"></span>
+            </button>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div style="padding-top:5px;"><h3>Shared:</h3></div>
+        <ul>
+            <li ng-repeat="node in fileTree" ng-include="'tree_item_renderer.html'"></li>
+        </ul>
+    </div>
+    <div class="panel-footer"></div>
+    <script type="text/ng-template"  id="tree_item_renderer.html">
+        <span ng-if="node.type == 'directory'" class="directory" ng-click="populateFileTree(node)">
+            <span style="padding-top:4px;padding-bottom:4px;padding-right:4px;">{{node.name}} <span class="glyphicon" ng-class="{'glyphicon-folder-close': !node.open, 'glyphicon-folder-open': node.open}" style="z-index:1"></span></span>
+        </span>
+        <span ng-if="node.type == 'file'" class="file" ng-click="download(node.path)">
+            <span style="padding-top:4px;padding-bottom:4px;padding-right:4px;">{{node.name}} <span class="glyphicon glyphicon-file" style="z-index:1"></span></span>
+        </span>
+        <ul>
+            <li ng-repeat="node in node.children" ng-include="'tree_item_renderer.html'"></li>
+        </ul>
+    </script>
+</div>

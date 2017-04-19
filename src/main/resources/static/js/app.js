@@ -1,10 +1,56 @@
 var chatApp = angular.module("chatApp", ['ui.bootstrap',
-  "chatApp.controllers", "ngSanitize", "colorpicker.module"
+  "chatApp.controllers", "ngSanitize", "colorpicker.module", "ngRoute"
 ]);
+
+function AuthorizationError(description) {
+    this.message = "Forbidden";
+    this.description = description || "User authentication required.";
+}
+
+AuthorizationError.prototype = Object.create(Error.prototype);
+AuthorizationError.prototype.constructor = AuthorizationError;
+
+chatApp.config(function($routeProvider) {
+    $routeProvider
+
+        // route for the messenger
+        .when('/chat', {
+            templateUrl : 'messenger.html',
+            controller  : 'ChatCtrl'
+        })
+
+        // route for the fileServer
+        .when('/fileServer', {
+            templateUrl : 'fileServer.html',
+            controller  : 'FileServerController',
+            authorize : true
+        })
+
+        .otherwise({
+            redirectTo: "/chat"
+        })
+}).run(["$rootScope", "$location", function($rootScope, $location) {
+    $rootScope.$on("$routeChangeStart", function(evt, to, from) {
+        // requires authorization?
+        if (to.authorize === true && !$rootScope.loggedInUser.authenticated) {
+            evt.preventDefault();
+            $location.path("/chat");
+            throw new AuthorizationError();
+        }
+    });
+    $rootScope.$on("$routeChangeError", function(evt, to, from, error) {
+        if (error instanceof AuthorizationError){
+            $location.path("/chat");
+        }
+    });
+}]).service;
 
 angular.module("chatApp.controllers", []);
 
-angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$rootScope,$modal) {
+angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$rootScope,$modal,$location) {
+  $rootScope.loggedInUser = {
+    authenticated: false
+  };
   $scope.messages = [];
   $scope.message = "";
   $scope.name = "";
@@ -33,10 +79,6 @@ angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$ro
       d.setHours(d.getHours() + timeOffsetInHours);
       return d;
   }
-
-  $scope.getUsers = function(){
-    //TODO get websocket sessions
-  };
 
   $scope.sendMessage = function(text,targetUsers) {
       socketClient.send("2|"+JSON.stringify({
@@ -408,10 +450,35 @@ $(window).blur(function() {
         });
     };
 
+  $scope.openFileServer = function() {
+    var username = $scope.name;
+    if($rootScope.loggedInUser.authenticated){
+        $location.path("/fileServer");
+    } else {
+        var loginModalInstance = $modal.open({
+            templateUrl: 'loginModal.html',
+            controller: 'FileServerLoginCtrl',
+            controllerAs: 'fileServerLoginCtrl',
+            scope: $scope
+        });
+    }
+  };
+
   window.onbeforeunload = function(e){
           disconnect();
       };
 
+});
+
+chatApp.factory('LoginService', function($http,$rootScope) {
+    return {
+        login : function(username, password) {
+            return $http.post("/login",{"username": username, "password": password}).then( function successCallback(response){
+                console.log( response );
+                $rootScope.loggedInUser = response.data;
+            });
+        },
+    };
 });
 
 chatApp.directive('parseUrl', function () {
@@ -484,6 +551,86 @@ chatApp.controller('PrivateMessageCtrl', ['$scope', function ($scope){
         },0,false);
     }
 }]);
+
+chatApp.controller('FileServerLoginCtrl', function ($scope, LoginService, $location, $rootScope, $modalInstance){
+    var fileServerLoginCtrl = this;
+    fileServerLoginCtrl.userName = $scope.name;
+    fileServerLoginCtrl.password = "";
+    fileServerLoginCtrl.invalid = false;
+
+    fileServerLoginCtrl.keyPress = function($event){
+        if ($event.keyCode == 13){
+            fileServerLoginCtrl.login();
+        }
+    };
+
+    fileServerLoginCtrl.login = function(){
+        LoginService.login(fileServerLoginCtrl.userName, fileServerLoginCtrl.password).then( function(){
+                if( $rootScope.loggedInUser.authenticated ){
+                    fileServerLoginCtrl.invalid = false;
+                    $location.path("/fileServer");
+                    $modalInstance.close();
+                } else {
+                    fileServerLoginCtrl.invalid = true;
+                }
+            }
+        );
+    };
+});
+
+chatApp.controller('FileServerController', function ($scope,$location,$http){
+    $scope.fileTree = [];
+
+    $scope.messenger = function(){
+        $location.path("/chat");
+    };
+
+    $scope.init = function(){
+        $scope.populateFileTree();
+    };
+
+    $scope.download = function( pathRoot ){
+        var url = "/download?path="+pathRoot;
+        window.open(encodeURI(url),"_blank");
+    }
+
+    $scope.populateFileTree = function( node ){
+        var path;
+        if( node ){
+            if( node.open ){
+                node.open = false;
+                node.children = [];
+                return;
+            }
+            path = node.path;
+            console.log("pathroot "+node.path);
+        }
+        $http.post("/fileTree?pathRoot="+path).then(function successCallback(response){
+            console.log(response);
+            if( !path ){
+                $scope.fileTree = response.data;
+            } else {
+                populateChildren( path, $scope.fileTree, response.data );
+            }
+        });
+    }
+
+    function populateChildren( target, searchList, newList ){
+        if( searchList.length > 0 ){
+            searchList.forEach( function( node ){
+                if( target == node.path ){
+                    node.open = true;
+                    node.children = newList;
+                    return;
+                } else {
+                    if( target.indexOf(node.path) > -1 ){
+                        populateChildren( target, node.children, newList );
+                    }
+                }
+            });
+        }
+    }
+});
 
 
 chatApp.controller('SettingsCtrl', ['$scope', function ($scope){
