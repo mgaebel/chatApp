@@ -17,6 +17,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -47,7 +48,7 @@ public class FileServerEndpointController {
                         path.toFile().getAbsolutePath(),
                         path.toFile().getName(),
                         path.toFile().isDirectory() ? "directory" : "file",
-                        String.valueOf( path.toFile().length() )
+                        readableFileSize( path.toFile().length() )
                 ) ) );
             } catch (IOException e ){
                 Gson gson = new Gson();
@@ -55,6 +56,13 @@ public class FileServerEndpointController {
             }
             return directoryList;
         }
+    }
+
+    public static String readableFileSize(long size) {
+        if(size <= 0) return "0";
+        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
     @RequestMapping( value = "download")
@@ -78,7 +86,27 @@ public class FileServerEndpointController {
         }
     }
 
+    @RequestMapping( value = "downloadDir")
+    public void downloadDir( @RequestParam("path") String path, HttpServletResponse response ) throws IOException {
+        if( hasText(path) ){
+            File file = new File( path );
 
+            response.setContentType("application/octet-stream");
+            response.setContentLength((int) file.length());
+            response.setHeader( "Content-Disposition",
+                    String.format("attachment; filename=\"%s\"", file.getName()));
+
+            OutputStream out = response.getOutputStream();
+            try (FileInputStream in = new FileInputStream(file)) {
+                byte[] buffer = new byte[4096];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+            }
+            out.flush();
+        }
+    }
 
     private class FileSystemNode {
         private String path;

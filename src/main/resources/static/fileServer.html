@@ -16,11 +16,31 @@
     </div>
     <div class="panel-footer"></div>
     <script type="text/ng-template"  id="tree_item_renderer.html">
-        <span ng-if="node.type == 'directory'" class="directory" ng-click="populateFileTree(node)">
-            <span style="padding-top:4px;padding-bottom:4px;padding-right:4px;">{{node.name}} <span class="glyphicon" ng-class="{'glyphicon-folder-close': !node.open, 'glyphicon-folder-open': node.open}" style="z-index:1"></span></span>
-        </span>
-        <span ng-if="node.type == 'file'" class="file" ng-click="download(node.path)">
-            <span style="padding-top:4px;padding-bottom:4px;padding-right:4px;">{{node.name}} <span class="glyphicon glyphicon-file" style="z-index:1"></span></span>
+        <div ng-if="node.type == 'directory'">
+            <span class="directory">
+                <span style="padding-top:4px;padding-bottom:4px;padding-right:4px;" ng-click="populateFileTree(node)">
+                    {{node.name}}
+                    <span ng-hide="node.loading" class="glyphicon" ng-class="{'glyphicon-folder-close': !node.open, 'glyphicon-folder-open': node.open}" style="z-index:1"></span>
+                    <img ng-show="node.loading" src="img/loader16.gif"/>
+                </span>
+            </span>
+            <span class="directoryDownload" ng-click="downloadDirectory(node.path)" data-toggle="tooltip" data-placement="top"
+                  tooltip="Download Folder Contents"
+                  tooltip-placement="top">
+                <span ng-hide="node.loading" class="glyphicon glyphicon-download-alt" style="padding:4px;"></span>
+            </span>
+            <span class="info" ng-click="googleItem(node.name, node.path.indexOf('Anime') > -1 ? 'Anime' : 'Movie' )" data-toggle="tooltip" data-placement="right"
+                  tooltip="info search"
+                  tooltip-placement="right">
+                <span ng-hide="node.loading" class="glyphicon glyphicon-info-sign"></span>
+            </span>
+        </div>
+        <span ng-if="node.type == 'file'" class="file">
+            <span style="padding-top:4px;padding-bottom:4px;padding-right:4px;" ng-click="download(node.path)" data-toggle="tooltip" data-placement="right"
+                  tooltip="Download ({{node.size}})"
+                  tooltip-placement="right">
+                {{node.name}}
+                <span class="glyphicon glyphicon-file" style="z-index:1"></span></span>
         </span>
         <ul>
             <li ng-repeat="node in node.children" ng-include="'tree_item_renderer.html'"></li>

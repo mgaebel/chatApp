@@ -592,7 +592,22 @@ chatApp.controller('FileServerController', function ($scope,$location,$http){
     $scope.download = function( pathRoot ){
         var url = "/download?path="+pathRoot;
         window.open(encodeURI(url),"_blank");
-    }
+    };
+
+    $scope.downloadDirectory = function( directoryPath ){
+        var url = "/downloadDir?path="+directoryPath;
+        window.open(encodeURI(url),"_blank");
+    };
+
+    $scope.googleItem = function( itemName, type ){
+        var url;
+        if( type == "Anime" ){
+            url = "https://anidb.net/perl-bin/animedb.pl?show=animelist&do.search=Search&adb.search="+itemName;
+        } else {
+            url = "http://www.imdb.com/find?ref_=nv_sr_fn&q="+itemName+"&s=all";
+        }
+        window.open(encodeURI(url),"_blank")
+    };
 
     $scope.populateFileTree = function( node ){
         var path;
@@ -602,6 +617,7 @@ chatApp.controller('FileServerController', function ($scope,$location,$http){
                 node.children = [];
                 return;
             }
+            node.loading = true;
             path = node.path;
             console.log("pathroot "+node.path);
         }
@@ -621,6 +637,7 @@ chatApp.controller('FileServerController', function ($scope,$location,$http){
                 if( target == node.path ){
                     node.open = true;
                     node.children = newList;
+                    node.loading = false;
                     return;
                 } else {
                     if( target.indexOf(node.path) > -1 ){
