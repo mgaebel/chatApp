@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -33,29 +34,51 @@ public class FileServerEndpointController {
     public List<FileSystemNode> fileTree(@RequestParam( value = "pathRoot", defaultValue = "") String pathRoot, HttpServletResponse httpServletResponse) throws IOException {
         if( !hasText(pathRoot) || equal( pathRoot, "undefined" ) ){
             List<FileSystemNode> rootList = new ArrayList<>();
-            String animeRoot = "Q:\\Anime";
-            rootList.add( new FileSystemNode(animeRoot, "Anime", "directory", "" ) );
-            String animeRoot2 = "L:\\Anime 2";
-            rootList.add( new FileSystemNode(animeRoot2, "Anime 2", "directory", "" ) );
-            String movieRoot = "E:\\Users\\Media\\Desktop\\Communal\\Movies";
-            rootList.add( new FileSystemNode(movieRoot, "Movies", "directory", "" ) );
+            rootList.add( new FileSystemNode("Anime", "Anime", "directory", "" ) );
+            rootList.add( new FileSystemNode("Movies", "Movies", "directory", "" ) );
+            rootList.add( new FileSystemNode("Other", "Other", "directory", "" ) );
             return rootList;
         } else {
             List<FileSystemNode> directoryList = new ArrayList<>();
             try {
-                Stream<Path> contents = Files.list(Paths.get(new File(pathRoot).toURI()));
-                contents.forEach( path -> directoryList.add( new FileSystemNode(
-                        path.toFile().getAbsolutePath(),
-                        path.toFile().getName(),
-                        path.toFile().isDirectory() ? "directory" : "file",
-                        readableFileSize( path.toFile().length() )
-                ) ) );
+                switch (pathRoot){
+                    case "Anime" : {
+                        populateDirList("Q:\\Anime", directoryList);
+                        populateDirList("L:\\Anime 2", directoryList);
+                        populateDirList("F:\\AnimeShare", directoryList);
+                        directoryList.sort((o1, o2) -> o1.name.compareTo(o2.name));
+                        break;
+                    }
+                    case "Movies" : {
+                        populateDirList("E:\\Users\\Media\\Desktop\\Communal\\Movies", directoryList);
+                        populateDirList("F:\\MovieShare", directoryList);
+                        directoryList.sort((o1, o2) -> o1.name.compareTo(o2.name));
+                        break;
+                    }
+                    case "Other" : {
+                        populateDirList("F:\\OtherShare", directoryList);
+                        break;
+                    }
+                    default : {
+                        populateDirList(pathRoot, directoryList);
+                    }
+                }
             } catch (IOException e ){
                 Gson gson = new Gson();
                 gson.toJson("ERROR"+e.getLocalizedMessage(), httpServletResponse.getWriter());
             }
             return directoryList;
         }
+    }
+
+    private void populateDirList(String pathRoot, List<FileSystemNode> directoryList) throws IOException {
+        Stream<Path> contents = Files.list(Paths.get(new File(pathRoot).toURI()));
+        contents.forEach( path -> directoryList.add( new FileSystemNode(
+                path.toFile().getAbsolutePath(),
+                path.toFile().getName(),
+                path.toFile().isDirectory() ? "directory" : "file",
+                readableFileSize( path.toFile().length() )
+        ) ) );
     }
 
     public static String readableFileSize(long size) {
