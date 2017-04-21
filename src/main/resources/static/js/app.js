@@ -590,13 +590,18 @@ chatApp.controller('FileServerController', function ($scope,$location,$http){
     };
 
     $scope.download = function( pathRoot ){
-        var url = "/download?path="+pathRoot;
+        var url = "/download?path="+pathRoot+"&zip=false";
         window.open(encodeURI(url),"_blank");
     };
 
-    $scope.downloadDirectory = function( directoryPath ){
-        var url = "/downloadDir?path="+directoryPath;
-        window.open(encodeURI(url),"_blank");
+    $scope.downloadDirectory = function( node ){
+        node.compressing = true;
+        $http.post( "/zipDir?path="+node.path ).then( function successCallback(response){
+            node.compressing = false;
+            console.log("zipResp: "+response.data.zipPath);
+            var url = "/download?path="+response.data.zipPath+"&zip=true";
+            window.open(encodeURI(url), "_blank");
+        });
     };
 
     $scope.googleItem = function( itemName, type ){

@@ -24,12 +24,13 @@
                     <img ng-show="node.loading" src="img/loader16.gif"/>
                 </span>
             </span>
-            <span class="directoryDownload" ng-click="downloadDirectory(node.path)" data-toggle="tooltip" data-placement="top"
+            <span ng-hide="node.root" class="directoryDownload" ng-click="downloadDirectory(node)" data-toggle="tooltip" data-placement="top"
                   tooltip="Download Folder Contents"
                   tooltip-placement="top">
                 <span ng-hide="node.loading" class="glyphicon glyphicon-download-alt" style="padding:4px;"></span>
+                <span ng-show="node.compressing"><i>Compressing for download </i><img src="img/loader16.gif"/></span>
             </span>
-            <span class="info" ng-click="googleItem(node.name, node.path.indexOf('Anime') > -1 ? 'Anime' : 'Movie' )" data-toggle="tooltip" data-placement="right"
+            <span class="info" ng-hide="node.root" ng-click="googleItem(node.name, node.path.indexOf('Anime') > -1 ? 'Anime' : 'Movie' )" data-toggle="tooltip" data-placement="right"
                   tooltip="info search"
                   tooltip-placement="right">
                 <span ng-hide="node.loading" class="glyphicon glyphicon-info-sign"></span>

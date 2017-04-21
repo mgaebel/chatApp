@@ -1,6 +1,7 @@
 package ChatApp.service;
 
 import com.google.gson.Gson;
+import com.sun.nio.zipfs.ZipDirectoryStream;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -8,10 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.filechooser.FileSystemView;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -23,6 +21,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import static com.google.common.base.Objects.equal;
 import static org.springframework.util.StringUtils.hasText;
@@ -34,9 +35,9 @@ public class FileServerEndpointController {
     public List<FileSystemNode> fileTree(@RequestParam( value = "pathRoot", defaultValue = "") String pathRoot, HttpServletResponse httpServletResponse) throws IOException {
         if( !hasText(pathRoot) || equal( pathRoot, "undefined" ) ){
             List<FileSystemNode> rootList = new ArrayList<>();
-            rootList.add( new FileSystemNode("Anime", "Anime", "directory", "" ) );
-            rootList.add( new FileSystemNode("Movies", "Movies", "directory", "" ) );
-            rootList.add( new FileSystemNode("Other", "Other", "directory", "" ) );
+            rootList.add( new FileSystemNode("Anime", "Anime", "directory", "", true ) );
+            rootList.add( new FileSystemNode("Movies", "Movies", "directory", "", true ) );
+            rootList.add( new FileSystemNode("Other", "Other", "directory", "", true ) );
             return rootList;
         } else {
             List<FileSystemNode> directoryList = new ArrayList<>();
@@ -77,7 +78,8 @@ public class FileServerEndpointController {
                 path.toFile().getAbsolutePath(),
                 path.toFile().getName(),
                 path.toFile().isDirectory() ? "directory" : "file",
-                readableFileSize( path.toFile().length() )
+                readableFileSize( path.toFile().length() ),
+                false
         ) ) );
     }
 
@@ -89,7 +91,7 @@ public class FileServerEndpointController {
     }
 
     @RequestMapping( value = "download")
-    public void download( @RequestParam("path") String path, HttpServletResponse response ) throws IOException {
+    public void download( @RequestParam("path") String path, @RequestParam("zip") boolean zip, HttpServletResponse response ) throws IOException {
         if( hasText(path) ){
             File file = new File( path );
             response.setContentType("application/octet-stream");
@@ -109,25 +111,66 @@ public class FileServerEndpointController {
         }
     }
 
-    @RequestMapping( value = "downloadDir")
-    public void downloadDir( @RequestParam("path") String path, HttpServletResponse response ) throws IOException {
+    @RequestMapping( value = "zipDir")
+    public ZipResponse zipDir( @RequestParam("path") String path, HttpServletResponse response ) throws IOException {
         if( hasText(path) ){
-            File file = new File( path );
-
-            response.setContentType("application/octet-stream");
-            response.setContentLength((int) file.length());
-            response.setHeader( "Content-Disposition",
-                    String.format("attachment; filename=\"%s\"", file.getName()));
-
-            OutputStream out = response.getOutputStream();
-            try (FileInputStream in = new FileInputStream(file)) {
-                byte[] buffer = new byte[4096];
-                int length;
-                while ((length = in.read(buffer)) > 0) {
-                    out.write(buffer, 0, length);
-                }
+            File directory = new File( path );
+            String zipPath = "C:\\temp\\"+ directory.getName() +".zip";
+            if( Files.exists( Paths.get("C:\\temp\\"+ directory.getName() +".zip") ) ){
+                return new ZipResponse( zipPath );
             }
-            out.flush();
+            File zipDir = new File( zipPath );
+            zipDirectory(directory, zipDir);
+            return new ZipResponse( zipPath );
+        }
+        return new ZipResponse("");
+    }
+
+
+    public void zipDirectory(File dir, File zipFile) throws IOException {
+        FileOutputStream fout = new FileOutputStream(zipFile);
+        ZipOutputStream zout = new ZipOutputStream(fout);
+        zipSubDirectory("", dir, zout);
+        zout.close();
+    }
+
+    private void zipSubDirectory(String basePath, File dir, ZipOutputStream zout) throws IOException {
+        byte[] buffer = new byte[4096];
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                String path = basePath + file.getName() + "/";
+                zout.putNextEntry(new ZipEntry(path));
+                zipSubDirectory(path, file, zout);
+                zout.closeEntry();
+            } else {
+                FileInputStream fin = new FileInputStream(file);
+                zout.putNextEntry(new ZipEntry(basePath + file.getName()));
+                int length;
+                while ((length = fin.read(buffer)) > 0) {
+                    zout.write(buffer, 0, length);
+                }
+                zout.closeEntry();
+                fin.close();
+            }
+        }
+    }
+
+    private class ZipResponse {
+        private String zipPath;
+
+        public ZipResponse() {}
+
+        public ZipResponse(String zipPath){
+            this.zipPath = zipPath;
+        }
+
+        public String getZipPath() {
+            return zipPath;
+        }
+
+        public void setZipPath(String zipPath) {
+            this.zipPath = zipPath;
         }
     }
 
@@ -136,17 +179,19 @@ public class FileServerEndpointController {
         private String name;
         private String type;
         private String size;
+        private Boolean root;
         private List<FileSystemNode> children;
 
         public FileSystemNode(){
             children = new ArrayList<>();
         }
 
-        public FileSystemNode(String path, String name, String type, String size){
+        public FileSystemNode(String path, String name, String type, String size, boolean root){
             this.path = path;
             this.name = name;
             this.type = type;
             this.size = size;
+            this.root = root;
             children = new ArrayList<>();
         }
 
@@ -188,6 +233,14 @@ public class FileServerEndpointController {
 
         public void setChildren(List<FileSystemNode> children) {
             this.children = children;
+        }
+
+        public Boolean getRoot() {
+            return root;
+        }
+
+        public void setRoot(Boolean root) {
+            this.root = root;
         }
     }
 }
