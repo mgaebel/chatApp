@@ -1,0 +1,23 @@
+<div id="Metrics" ng-init="init()">
+    <div class="panel panel-default" style="width:100%;">
+        <div class="panel-heading users" style="z-index:5;">
+            <button id="messenger" class="btn btn-primary" style="float:right;margin-left:2px;margin-right:2px;" type="button" ng-click="messenger()" data-toggle="tooltip" data-placement="left"
+                    tooltip="Goto Chat"
+                    tooltip-placement="left">
+                <span class="glyphicon glyphicon-align-left"></span>
+            </button>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div ng-repeat="metric in metricCtrl.metricList" class="metricListItem">
+            <span style="float:left;">{{metric.label}}</span>
+            <button class="btn btn-primary" style="float:right;margin-left:2px;margin-right:2px;" ng-click="addMeasurement(metric.id)" data-toggle="tooltip" data-placement="left"
+                    tooltip="Add"
+                    tooltip-placement="left">
+                <span class="glyphicon glyphicon-add"></span>
+            </button>
+        </div>
+
+    </div>
+    <div class="panel-footer"></div>
+</div>

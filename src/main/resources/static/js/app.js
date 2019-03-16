@@ -1,5 +1,5 @@
 var chatApp = angular.module("chatApp", ['ui.bootstrap',
-  "chatApp.controllers", "ngSanitize", "colorpicker.module", "ngRoute"
+  "chatApp.controllers", "ngSanitize", "colorpicker.module", "ngRoute", "chart.js"
 ]);
 
 function AuthorizationError(description) {
@@ -26,6 +26,13 @@ chatApp.config(function($routeProvider) {
             authorize : true
         })
 
+        .when('/metrics', {
+            templateUrl : 'metrics.html',
+            controller  : 'MetricsController',
+            controllerAs: 'metricCtrl',
+            authorize : true
+        })
+
         .otherwise({
             redirectTo: "/chat"
         })
@@ -47,7 +54,7 @@ chatApp.config(function($routeProvider) {
 
 angular.module("chatApp.controllers", []);
 
-angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$rootScope,$modal,$location) {
+angular.module("chatApp.controllers").controller("ChatCtrl", function($scope,$rootScope,$modal,$location,$routeParams) {
   $rootScope.loggedInUser = {
     authenticated: false
   };
@@ -209,7 +216,7 @@ $(window).blur(function() {
                     }
                 });
             }
-            if (permission === "granted") {
+            if (Notification.permission === "granted") {
                 notification = new Notification(data.sender,options);
             }
         }
@@ -313,6 +320,7 @@ $(window).blur(function() {
 
         socket.onclose = function(e) {
          disconnect();
+         var dateString = date.toISOString();
          console.log('closed!!');
          console.log(e);
          setTimeout( function(){
@@ -450,24 +458,73 @@ $(window).blur(function() {
         });
     };
 
-  $scope.openFileServer = function() {
+  $scope.openMetrics = function() {
     var username = $scope.name;
     if($rootScope.loggedInUser.authenticated){
-        $location.path("/fileServer");
+        $location.path("/metrics").search({userName : username});
     } else {
         var loginModalInstance = $modal.open({
             templateUrl: 'loginModal.html',
-            controller: 'FileServerLoginCtrl',
-            controllerAs: 'fileServerLoginCtrl',
-            scope: $scope
+            controller: 'LoginCtrl',
+            controllerAs: 'loginCtrl',
+            scope: $scope,
+            resolve: {
+                path : function() {
+                    return "/metrics";
+                }
+            }
+        });
+    }
+  }
+
+  $scope.openFileServer = function() {
+    var username = $scope.name;
+    if($rootScope.loggedInUser.authenticated){
+        $location.path("/fileServer").search({userName : username});
+    } else {
+        var loginModalInstance = $modal.open({
+            templateUrl: 'loginModal.html',
+            controller: 'LoginCtrl',
+            controllerAs: 'loginCtrl',
+            scope: $scope,
+            resolve: {
+                path : function() {
+                    return "/fileServer";
+                }
+            }
+
         });
     }
   };
 
   window.onbeforeunload = function(e){
-          disconnect();
-      };
+    console.log("disconnecting...");
+    disconnect();
+  };
 
+  if( $routeParams.userName ){
+    console.log("in user thingy");
+    $scope.name = $routeParams.userName;
+    $scope.initUser();
+  }
+
+});
+
+chatApp.factory('MetricService', function($http,$rootScope) {
+    return {
+        list : function() {
+            return $http.get("/metrics").then( function successCallback(response){
+                console.log(response);
+                return response.data;
+            });
+        },
+        get : function(metricId) {
+            return $http.get("/metric/"+metricId).then( function successCallback(response){
+                console.log(response);
+                return response.data;
+            });
+        }
+    };
 });
 
 chatApp.factory('LoginService', function($http,$rootScope) {
@@ -552,37 +609,70 @@ chatApp.controller('PrivateMessageCtrl', ['$scope', function ($scope){
     }
 }]);
 
-chatApp.controller('FileServerLoginCtrl', function ($scope, LoginService, $location, $rootScope, $modalInstance){
-    var fileServerLoginCtrl = this;
-    fileServerLoginCtrl.userName = $scope.name;
-    fileServerLoginCtrl.password = "";
-    fileServerLoginCtrl.invalid = false;
+chatApp.controller('LoginCtrl', function ($scope, LoginService, $location, $rootScope, $modalInstance, path){
+    var loginCtrl = this;
+    loginCtrl.userName = $scope.name;
+    loginCtrl.password = "";
+    loginCtrl.invalid = false;
+    console.log(path);
+    loginCtrl.path = path;
 
-    fileServerLoginCtrl.keyPress = function($event){
+    loginCtrl.keyPress = function($event){
         if ($event.keyCode == 13){
-            fileServerLoginCtrl.login();
+            loginCtrl.login();
         }
     };
 
-    fileServerLoginCtrl.login = function(){
-        LoginService.login(fileServerLoginCtrl.userName, fileServerLoginCtrl.password).then( function(){
+    loginCtrl.login = function(){
+        LoginService.login(loginCtrl.userName, loginCtrl.password).then( function( data ){
                 if( $rootScope.loggedInUser.authenticated ){
-                    fileServerLoginCtrl.invalid = false;
-                    $location.path("/fileServer");
+                    loginCtrl.invalid = false;
+                    console.log("attempting to go to fileServer "+ loginCtrl.path);
+                    $location.path(loginCtrl.path).search({userName: loginCtrl.userName});
                     $modalInstance.close();
                 } else {
-                    fileServerLoginCtrl.invalid = true;
+                    loginCtrl.invalid = true;
                 }
             }
         );
     };
 });
 
-chatApp.controller('FileServerController', function ($scope,$location,$http){
+chatApp.controller('MetricsController', function ($scope,$location,$http,$routeParams,MetricService){
+    $scope.userName = $routeParams.userName;
+    $scope.metricList = [];
+    $scope.init = function(){
+        $scope.metricList = MetricService.list($scope.userName);
+    };
+
+    $scope.messenger = function(){
+        $location.path("/chat").search({userName : $routeParams.userName});
+    };
+
+    $scope.addMeasurement = function(metricId){
+        var measurementModal = $modal.open({
+          templateUrl: 'measurement.html',
+          controller: 'MeasurementController',
+          scope: $scope,
+          resolve:{
+            metric: function(){
+                return MetricService.get(metricId);
+            }
+          }
+        });
+    };
+
+});
+
+chatApp.controller('MeasurementController', function ($scope,$location,$http,metric){
+
+});
+
+chatApp.controller('FileServerController', function ($scope,$location,$http,$routeParams){
     $scope.fileTree = [];
 
     $scope.messenger = function(){
-        $location.path("/chat");
+        $location.path("/chat").search({userName : $routeParams.userName});
     };
 
     $scope.init = function(){

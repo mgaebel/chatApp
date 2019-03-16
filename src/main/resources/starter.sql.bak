@@ -1,0 +1,23 @@
+INSERT INTO user (name, status, password) VALUES ('Michael','OFFLINE','FileAdmin');
+INSERT INTO user (name, status, password) VALUES ('Kevan','OFFLINE','Kevan');
+INSERT INTO user (name, status, password) VALUES ('Kirk','OFFLINE','Kirk');
+INSERT INTO user (name, status, password) VALUES ('Kyle','OFFLINE','Kyle');
+INSERT INTO user (name, status, password) VALUES ('Corey','OFFLINE','Corey');
+
+INSERT INTO unit (code, display) VALUES ("D","Day(s)");
+INSERT INTO unit (code, display) VALUES ("W","Week(s)");
+INSERT INTO unit (code, display) VALUES ("M","Month(s)");
+INSERT INTO unit (code, display) VALUES ("Y","Year(s)");
+INSERT INTO unit (code, display) VALUES ("H","Hour(s)");
+INSERT INTO unit (code, display) VALUES ("m","Minute(s)");
+INSERT INTO unit (code, display) VALUES ("s","Second(s)");
+INSERT INTO unit (code, display) VALUES ("cm","cm");
+INSERT INTO unit (code, display) VALUES ("g","grams");
+INSERT INTO unit (code, display) VALUES ("cal","calories");
+INSERT INTO unit (code, display) VALUES ("lbs","lbs");
+INSERT INTO unit (code, display) VALUES ("rep","rep");
+INSERT INTO unit (code, display) VALUES ("set","set");
+INSERT INTO unit (code, display) VALUES ("shit","shit");
+INSERT INTO unit (code, display) VALUES ("u","unit");
+
+INSERT INTO metric (label,data_type,unit_id,lower_bound,upper_bound,operator,validation) SELECT 'Weight','Numeric', u.id, '0.0',NULL,'NUMERATOR','^[0-9\\.]$' FROM unit u WHERE u.code = 'lbs';

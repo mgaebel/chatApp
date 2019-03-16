@@ -8,9 +8,6 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Created by Michael on 15/04/2015.
- */
 public class OutgoingChatMessageSerializer implements JsonSerializer<OutgoingChatMessage>{
     @Override
     public JsonElement serialize(OutgoingChatMessage outgoingChatMessage, Type type, JsonSerializationContext jsonSerializationContext) {

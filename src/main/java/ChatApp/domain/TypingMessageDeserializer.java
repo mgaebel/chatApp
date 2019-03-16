@@ -7,9 +7,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Michael on 17/04/2015.
- */
 public class TypingMessageDeserializer implements JsonDeserializer<TypingMessage> {
 
     @Override
@@ -22,7 +19,7 @@ public class TypingMessageDeserializer implements JsonDeserializer<TypingMessage
         for( int i=0; i < targetUsersArray.size(); i++ ){
             User user = new User();
             user.setName( targetUsersArray.get(i).getAsJsonObject().getAsJsonPrimitive("name").getAsString());
-            user.setId( targetUsersArray.get(i).getAsJsonObject().getAsJsonPrimitive("id").getAsString());
+            user.setId( targetUsersArray.get(i).getAsJsonObject().getAsJsonPrimitive("id").getAsLong());
             targetUsers.add(user);
         }
         message.setTargetUsers(targetUsers);

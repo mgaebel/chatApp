@@ -7,9 +7,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Michael on 17/04/2015.
- */
 public class IncomingChatMessageDeserializer implements JsonDeserializer<IncomingChatMessage> {
 
     @Override
@@ -26,7 +23,7 @@ public class IncomingChatMessageDeserializer implements JsonDeserializer<Incomin
             User user = new User();
             user.setStatus( StatusEnum.valueOf(targetUsersArray.get(i).getAsJsonObject().getAsJsonPrimitive("status").getAsString()) );
             user.setName( targetUsersArray.get(i).getAsJsonObject().getAsJsonPrimitive("name").getAsString());
-            user.setId( targetUsersArray.get(i).getAsJsonObject().getAsJsonPrimitive("id").getAsString());
+            user.setId( targetUsersArray.get(i).getAsJsonObject().getAsJsonPrimitive("id").getAsLong());
             user.setLocalDateTime(LocalDateTime.now());
             targetUsers.add(user);
         }

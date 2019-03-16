@@ -10,19 +10,22 @@ import static com.google.common.base.Objects.equal;
 @RestController
 public class LoginEndpointController {
 
-    Map<String,String> userAuthMap = new HashMap<String,String>();
-    Map<String,String> userRoleMap = new HashMap<String, String>();
+    Map<String,String> userAuthMap = new HashMap<>();
+    Map<String,String> userRoleMap;
 
     public LoginEndpointController() {
         userAuthMap.put("michael","fileAdmin");
         userAuthMap.put("kevan","kevan");
         userAuthMap.put("kirk","kirk");
         userAuthMap.put("kyle","kyle");
+        userAuthMap.put("corey","corey");
 
+        userRoleMap = new HashMap<>();
         userRoleMap.put("michael","ADMIN");
         userRoleMap.put("kevan","General");
         userRoleMap.put("kirk","General");
         userRoleMap.put("kyle","General");
+        userAuthMap.put("corey","General");
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)

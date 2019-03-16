@@ -3,9 +3,6 @@ package ChatApp.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Created by Michael on 17/03/2015.
- */
 public class OutgoingChatMessage {
     private LocalDateTime messageTime;
     private String sender;

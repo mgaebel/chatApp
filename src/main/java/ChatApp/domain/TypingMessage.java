@@ -2,9 +2,6 @@ package ChatApp.domain;
 
 import java.util.List;
 
-/**
- * Created by Michael on 22/04/2015.
- */
 public class TypingMessage {
 
     private String sender;

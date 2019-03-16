@@ -1,15 +1,12 @@
 package ChatApp.domain;
 
-/**
- * Created by Michael on 11/25/2015.
- */
 public class UserSettings {
     String name;
     boolean soundNotification;
     boolean browserNotification;
     boolean typingText;
     String labelColor;
-    String inlineImages;
+    boolean inlineImages;
     int messageType = 5;
 
     public String getName() {
@@ -60,11 +57,11 @@ public class UserSettings {
         this.labelColor = labelColor;
     }
 
-    public String getInlineImages() {
+    public boolean getInlineImages() {
         return inlineImages;
     }
 
-    public void setInlineImages(String inlineImages) {
+    public void setInlineImages(boolean inlineImages) {
         this.inlineImages = inlineImages;
     }
 }

@@ -1,8 +1,5 @@
 package ChatApp.domain;
 
-/**
- * Created by Michael on 13/04/2015.
- */
 public class RemoveSessionMessage {
 
     private String userName;

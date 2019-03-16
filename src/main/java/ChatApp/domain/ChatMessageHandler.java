@@ -2,6 +2,7 @@ package ChatApp.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -9,13 +10,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@Component
 public class ChatMessageHandler {
 
-    private GsonBuilder gsonBuilder;
     private Gson gson;
 
     public ChatMessageHandler(){
-        gsonBuilder = new GsonBuilder();
+        GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter( OutgoingChatMessage.class, new OutgoingChatMessageSerializer());
         gson = gsonBuilder.create();
     }

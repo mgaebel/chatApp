@@ -5,9 +5,6 @@ import com.google.gson.*;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 
-/**
- * Created by Michael on 14/04/2015.
- */
 public class RemoveSessionMessageDeserializer implements JsonDeserializer<RemoveSessionMessage>{
     @Override
     public RemoveSessionMessage deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {

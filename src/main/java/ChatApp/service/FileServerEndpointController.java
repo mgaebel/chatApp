@@ -1,28 +1,18 @@
 package ChatApp.service;
 
 import com.google.gson.Gson;
-import com.sun.nio.zipfs.ZipDirectoryStream;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.filechooser.FileSystemView;
 import java.io.*;
-import java.net.URI;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import static com.google.common.base.Objects.equal;
@@ -43,21 +33,36 @@ public class FileServerEndpointController {
             List<FileSystemNode> directoryList = new ArrayList<>();
             try {
                 switch (pathRoot){
-                    case "Anime" : {
-                        populateDirList("Q:\\Anime", directoryList);
-                        populateDirList("L:\\Anime 2", directoryList);
-                        populateDirList("F:\\AnimeShare", directoryList);
+                        case "Anime" : {
+                            try {
+                                populateDirList("O:\\Anime", directoryList);
+                            } catch (Exception e ){
+                                //ignored
+                            }
+                            try {
+                                populateDirList("O:\\Anime Movies", directoryList);
+                            }
+                            catch (Exception e ){
+                                //ignored
+                            }
                         directoryList.sort((o1, o2) -> o1.name.compareTo(o2.name));
                         break;
                     }
                     case "Movies" : {
-                        populateDirList("E:\\Users\\Media\\Desktop\\Communal\\Movies", directoryList);
-                        populateDirList("F:\\MovieShare", directoryList);
+                        try {
+                            populateDirList("O:\\Movies", directoryList);
+                        }catch (Exception e ){
+                            //ignored
+                        }
                         directoryList.sort((o1, o2) -> o1.name.compareTo(o2.name));
                         break;
                     }
                     case "Other" : {
-                        populateDirList("F:\\OtherShare", directoryList);
+                        try {
+                            populateDirList("F:\\OtherShare", directoryList);
+                        } catch (Exception e ){
+                            //ignored
+                        }
                         break;
                     }
                     default : {

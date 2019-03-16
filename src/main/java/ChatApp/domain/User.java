@@ -1,17 +1,42 @@
 package ChatApp.domain;
 
+import com.google.gson.GsonBuilder;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * Created by Michael on 16/03/2015.
- */
+@Entity
+@Table(name="user")
 public class User {
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Column(name="name")
     private String name;
+    @Column(name="status")
+    @Enumerated(EnumType.STRING)
     private StatusEnum status;
+    @Column( name="date_time")
     private LocalDateTime localDateTime;
+    @Column( name="sound_notification" )
+    private Boolean soundNotification;
+    @Column( name="browser_notification" )
+    private Boolean browserNotification;
+    @Column( name="typing_text" )
+    private Boolean typingText;
+    @Column( name="label_color" )
+    private String labelColor;
+    @Column(name="inline_images")
+    private Boolean inlineImages;
 
-    public User(){}
+    public User(){
+        soundNotification = true;
+        browserNotification = false;
+        typingText = false;
+        labelColor = "#00bcc7";
+        inlineImages = true;
+        status = StatusEnum.ONLINE;
+    }
 
     public String getName() {
         return name;
@@ -37,6 +62,45 @@ public class User {
         this.localDateTime = localDateTime;
     }
 
+    public Boolean getSoundNotification() {
+        return soundNotification;
+    }
+
+    public void setSoundNotification(Boolean soundNotification) {
+        this.soundNotification = soundNotification;
+    }
+
+    public Boolean getBrowserNotification() {
+        return browserNotification;
+    }
+
+    public void setBrowserNotification(Boolean browserNotification) {
+        this.browserNotification = browserNotification;
+    }
+
+    public Boolean getTypingText() {
+        return typingText;
+    }
+
+    public void setTypingText(Boolean typingText) {
+        this.typingText = typingText;
+    }
+
+    public String getLabelColor() {
+        return labelColor;
+    }
+
+    public void setLabelColor(String labelColor) {
+        this.labelColor = labelColor;
+    }
+
+    public Boolean getInlineImages() {
+        return inlineImages;
+    }
+
+    public void setInlineImages(Boolean inlineImages) {
+        this.inlineImages = inlineImages;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -58,11 +122,31 @@ public class User {
         return result;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public UserSettings getUserSettings() {
+        UserSettings settings = new UserSettings();
+        settings.setName(name);
+        settings.setLabelColor(labelColor);
+        settings.setBrowserNotification(browserNotification);
+        settings.setInlineImages(inlineImages);
+        settings.setSoundNotification(soundNotification);
+        settings.setTypingText(typingText);
+        return settings;
+    }
+
+    public void setUserSettings(UserSettings userSettings) {
+        name = userSettings.getName();
+        labelColor = userSettings.getLabelColor();
+        browserNotification = userSettings.isBrowserNotification();
+        inlineImages = userSettings.getInlineImages();
+        soundNotification = userSettings.isSoundNotification();
+        typingText = userSettings.isTypingText();
     }
 }

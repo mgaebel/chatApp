@@ -1,4 +1,4 @@
-<form class="connectionControls" ng-hide="connected" name="form">
+<form class="connectionControls" ng-hide="connected" ng-init="checkReturn()" name="form">
     <div class="panel panel-default">
         <div class="panel-body connection">
             <div class="form-group">
@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <small class="col-md-2 col-md-offset-5" ng-show="form.$invalid" style="color:red">Go away, Kyle.</small>
+                <small class="col-md-2 col-md-offset-5" ng-show="form.$invalid" style="color:red">Invalid name</small>
             </div>
         </div>
     </div>
@@ -20,6 +20,11 @@
         <div class="panel panel-default" style="width:100%;">
             <div class="panel-heading users">
                 <button class="btn btn-xs userButton" id="{{user.name}}" ng-repeat="user in users" ng-click="sendPrivateMessage(user.name)">{{user.name}}</button>
+                <button class="btn btn-primary" style="float:right;margin-left:2px;margin-right:2px;" ng-hide="!connected" ng-click="openMetrics()" data-toggle="tooltip" data-placement="left"
+                        tooltip="Metrics"
+                        tooltip-placement="left">
+                    <span class="glyphicon glyphicon-equalizer"></span>
+                </button>
                 <button class="btn btn-primary" style="float:right;margin-left:2px;margin-right:2px;" ng-hide="!connected" ng-click="openFileServer()" data-toggle="tooltip" data-placement="left"
                         tooltip="File Server Login"
                         tooltip-placement="left">

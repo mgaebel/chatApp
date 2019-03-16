@@ -1,0 +1,16 @@
+<div ng-init="init();" class="modal-header">
+    <h3 class="modal-title">Add Measurement</h3>
+</div>
+<div class="modal-body">
+    <div class="control-group">
+        <div class="controls">
+            <label class="control-label label" for="userName">{{}}</label>
+            <input id="loginUsername" placeholder="Username" type="text" style="width:70%;height:33px;" ng-model="loginCtrl.userName" required/>
+        </div>
+        <div class="controls">
+            <label class="control-label label" for="password">Password</label>
+            <input id="loginPassword" ng-keypress="loginCtrl.keyPress($event)" autofocus placeholder="Password" type="password" style="width:70%;height:33px;" ng-model="loginCtrl.password" required/>
+        </div>
+        <button ng-click="addMeasurement()" class="btn btn-primary">Add</button>
+    </div>
+</div>

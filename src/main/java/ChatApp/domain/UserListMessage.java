@@ -3,9 +3,6 @@ package ChatApp.domain;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by Michael on 15/04/2015.
- */
 public class UserListMessage {
 
     private int messageType = 1;

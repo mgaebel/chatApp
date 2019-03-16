@@ -2,26 +2,25 @@ package ChatApp.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-/**
- * Created by Michael on 14/04/2015.
- */
+@Component
 public class ChatAppTextHandler extends TextWebSocketHandler {
 
-    private GsonBuilder gsonBuilder;
     private Gson gson;
+    @Autowired
     private SessionMessageHandler sessionMessageHandler;
+    @Autowired
     private ChatMessageHandler chatMessageHandler;
 
     public ChatAppTextHandler(){
-        gsonBuilder = new GsonBuilder();
-        registerTypeAdapters( gsonBuilder );
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        registerTypeAdapters(gsonBuilder);
         gson = gsonBuilder.create();
-        sessionMessageHandler = new SessionMessageHandler();
-        chatMessageHandler = new ChatMessageHandler();
     }
 
     @Override

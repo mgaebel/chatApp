@@ -2,9 +2,6 @@ package ChatApp.domain;
 
 import java.time.LocalDate;
 
-/**
- * Created by Michael on 13/04/2015.
- */
 public class NewSessionMessage {
 
     private String name;

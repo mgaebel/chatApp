@@ -5,9 +5,6 @@ import com.google.gson.*;
 import java.lang.reflect.Type;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Created by Michael on 15/04/2015.
- */
 public class UserListMessageSerializer implements JsonSerializer<UserListMessage> {
     @Override
     public JsonElement serialize(UserListMessage userListMessage, Type type, JsonSerializationContext jsonSerializationContext) {

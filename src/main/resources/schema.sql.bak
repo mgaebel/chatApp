@@ -1,0 +1,53 @@
+DROP TABLE IF EXISTS user;
+CREATE TABLE user (
+id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+name varchar(50) NOT NULL DEFAULT '',
+status enum('ONLINE','OFFLINE','BUSY'),
+password varchar(255) DEFAULT NULL,
+role enum('GENERAL','ADMIN') NOT NULL DEFAULT 'GENERAL',
+date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+sound_notification tinyint(1) NOT NULL DEFAULT 0,
+browser_notification tinyint(1) NOT NULL DEFAULT 0,
+typing_text tinyint(1) NOT NULL DEFAULT 0,
+inline_images tinyint(1) NOT NULL DEFAULT 0,
+label_color varchar(50) NOT NULL DEFAULT '',
+PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS unit;
+CREATE TABLE unit (
+id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+code varchar(50) NOT NULL DEFAULT '',
+display varchar(255) NOT NULL DEFAULT '',
+PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS metric;
+CREATE TABLE metric (
+id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+label varchar(255) NOT NULL DEFAULT '',
+data_type varchar(255) NOT NULL,
+unit_id INT(11) UNSIGNED DEFAULT NULL,
+lower_bound varchar(255) DEFAULT NULL,
+upper_bound varchar(255) DEFAULT NULL,
+operator enum('NUMERATOR','DENOMINATOR','PRODUCT'),
+validation varchar(255) DEFAULT NULL,
+PRIMARY KEY (id),
+FOREIGN KEY (unit_id) REFERENCES unit (id)
+);
+
+DROP TABLE IF EXISTS measurement;
+CREATE TABLE measurement (
+id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+group_id INT(11) UNSIGNED DEFAULT NULL,
+metric_id INT(11) UNSIGNED NOT NULL,
+value varchar(255) DEFAULT NULL,
+user_id INT(11) UNSIGNED NOT NULL,
+date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+comment varchar(2000) DEFAULT NULL,
+flag varchar(50) DEFAULT NULL,
+PRIMARY KEY (id),
+INDEX (user_id,metric_id),
+FOREIGN KEY (user_id) REFERENCES user (id),
+FOREIGN KEY (metric_id) REFERENCES metric (id)
+);

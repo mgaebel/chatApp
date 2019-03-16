@@ -1,8 +1,5 @@
 package ChatApp.domain;
 
-/**
- * Created by Michael on 11/25/2015.
- */
 public class SettingsRequestMessage {
     private String name;
 
