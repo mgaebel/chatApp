@@ -2,24 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b5e4aa6b-7cbd-441f-9b23-25930f00c37a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/metrics/DataType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/metrics/Measurement.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/metrics/Metric.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/metrics/Operator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/metrics/Unit.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/metrics/dataTypes/Numeric.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/repository/LocalDateAttributeConverter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/repository/LocalDateTimeAttributeConverter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/repository/MetricRepository.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/repository/UserRepository.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/service/MetricEndpointController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/schema.sql.bak" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/starter.sql.bak" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/static/js/Chart.bundle.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/static/js/angular-chart.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/static/measurement.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/static/metrics.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/ChatApp/App.class" afterPath="$PROJECT_DIR$/target/classes/ChatApp/App.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/ChatApp/domain/ChatAppTextHandler.class" afterPath="$PROJECT_DIR$/target/classes/ChatApp/domain/ChatAppTextHandler.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/ChatApp/domain/ChatMessageHandler.class" afterPath="$PROJECT_DIR$/target/classes/ChatApp/domain/ChatMessageHandler.class" />
@@ -43,36 +25,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/ChatApp/domain/UserSettings.class" afterPath="$PROJECT_DIR$/target/classes/ChatApp/domain/UserSettings.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/ChatApp/domain/WebSocketConfig.class" afterPath="$PROJECT_DIR$/target/classes/ChatApp/domain/WebSocketConfig.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/App.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/App.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/ChatAppTextHandler.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/ChatAppTextHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/ChatMessageHandler.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/ChatMessageHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/IncomingChatMessage.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/IncomingChatMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/IncomingChatmessageDeserializer.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/IncomingChatmessageDeserializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/NewSessionMessage.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/NewSessionMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/NewSessionMessageDeserializer.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/NewSessionMessageDeserializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/OutgoingChatMessage.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/OutgoingChatMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/OutgoingChatMessageSerializer.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/OutgoingChatMessageSerializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/RemoveSessionMessage.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/RemoveSessionMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/RemoveSessionMessageDeserializer.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/RemoveSessionMessageDeserializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/SessionMessageHandler.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/SessionMessageHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/SettingsRequestMessage.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/SettingsRequestMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/SettingsRequestMessageDeserializer.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/SettingsRequestMessageDeserializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/StatusEnum.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/StatusEnum.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/TypingMessage.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/TypingMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/TypingMessageDeserializer.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/TypingMessageDeserializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/User.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/User.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/UserListMessage.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/UserListMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/UserListMessageSerializer.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/UserListMessageSerializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/UserSettings.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/UserSettings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/domain/WebSocketConfig.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/domain/WebSocketConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/service/FileServerEndpointController.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/service/FileServerEndpointController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ChatApp/service/LoginEndpointController.java" afterPath="$PROJECT_DIR$/src/main/java/ChatApp/service/LoginEndpointController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/static/js/app.js" afterPath="$PROJECT_DIR$/src/main/resources/static/js/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/static/messenger.html" afterPath="$PROJECT_DIR$/src/main/resources/static/messenger.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/static/index.html" afterPath="$PROJECT_DIR$/target/classes/static/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/website.iml" afterPath="$PROJECT_DIR$/website.iml" />
     </list>
     <ignored path="website.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -1078,7 +1031,13 @@
       <option name="project" value="LOCAL" />
       <updated>1492741735172</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="updates">
+      <created>1552761384842</created>
+      <option name="number" value="00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1552761384842</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1168,7 +1127,8 @@
     <MESSAGE value="bugfix" />
     <MESSAGE value="fileserver first cut" />
     <MESSAGE value="fileserver updates" />
-    <option name="LAST_COMMIT_MESSAGE" value="fileserver updates" />
+    <MESSAGE value="updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="updates" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
